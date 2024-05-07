@@ -62,13 +62,41 @@ const addBookHandler = (request, h) => {
 
 }
 
-// API MENAMPILKAN BUKU
-const getAllBookHandler = () => ({
-    status: 'success',
-    data:{
-        bookshelf
+// API MENAMPILKAN SEMUA BUKU
+const getAllBookHandler = (request, h) => {
+    // Mengambil nilai query parameters
+    const { name, reading, finished } = request.query;
+
+    // Filter berdasarkan query parameters
+    let filteredBooks = [...bookshelf];
+
+    // Filter berdasarkan nama buku 
+    if (name) {
+        const queryName = name.toLowerCase(); 
+        filteredBooks = filteredBooks.filter(book => book.name.toLowerCase().includes(queryName));
     }
-})
+
+    // Filter berdasarkan status reading
+    if (reading !== undefined) {
+        const isReading = reading === '1'; 
+        filteredBooks = filteredBooks.filter(book => book.reading === isReading);
+    }
+
+    // Filter berdasarkan status finished
+    if (finished !== undefined) {
+        const isFinished = finished === '1'; 
+        filteredBooks = filteredBooks.filter(book => book.finished === isFinished);
+    }
+
+    return {
+        status: 'success',
+        data: {
+            books: filteredBooks
+        }
+    };
+};
+
+
 
 // API MENAMPILKAN DETAILED BUKU
 const getDetailedBookHandler = (request, h) => {
